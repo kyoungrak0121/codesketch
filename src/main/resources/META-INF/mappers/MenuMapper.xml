@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.spring.code.vo.dao.MenuDao">
+	<cache />  
+	
+	<resultMap id="menuResultMap" type="menuDto">
+		<id property="menuSeq" column="menu_seq" />
+		<result property="parentMenuSeq" column="parent_menu_seq"/>
+		
+		<result property="linkUrl" column="link_url"/>
+	</resultMap>
+
+  	<select id="select" resultMap="menuResultMap" parameterType="map">
+ 	
+  		SELECT 
+  			SQL_CALC_FOUND_ROWS * 
+  		FROM cs_menu 
+ 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+ 			<if test="menu_seq > 0"> 
+ 				AND menu_seq like #{menu_seq} 
+ 			</if>
+ 			<if test="parent_menu_seq != null"> 
+ 				AND parent_menu_seq like #{parent_menu_seq} 
+ 			</if>
+ 			<if test="standard != null "> 
+ 				AND standard like #{standard} 
+ 			</if>
+ 			<if test="depth != null "> 
+ 				AND depth like #{depth} 
+ 			</if>
+ 			<if test="priority != null "> 
+ 				AND priority like #{priority} 
+ 			</if>
+ 			<if test="title != null"> 
+ 				AND title like #{title} 
+ 			</if>
+ 			
+ 			<if test="link_url != null"> 
+ 				AND link_url like #{link_url} 
+ 			</if>
+ 			<if test="visible != null"> 
+ 				AND visible like #{visible} 
+ 			</if>
+ 		</trim>	
+  		
+  		
+  		ORDER BY
+  		<choose>
+  			<when  test="sidx != null and sidx !='' "> 
+	  			${sidx} 
+	  			<if test="sord != null and sord !=''"> 
+	  				${sord}
+	  			</if>
+  			</when>
+  			<otherwise>
+  				standard,depth,priority
+  			</otherwise>
+  		</choose>
+  		
+  		<if test="startIndex != null and endIndex != null"> 
+  			LIMIT #{startIndex}, #{endIndex} 
+  		</if>
+  		
+	</select>
+	
+	<insert id="insert" parameterType="list" useGeneratedKeys="true"  keyProperty="menuSeq">
+	    <if test="list.size != 0">
+	        INSERT INTO cs_menu (
+	            parent_menu_seq, standard, depth, priority, title, link_url, visible 
+	        )
+	        VALUES
+	        <foreach collection="list" item="menuDto" separator=",">
+	        (
+	              #{menuDto.parentMenuSeq}
+	            , #{menuDto.standard}
+	            , #{menuDto.depth}
+	            , #{menuDto.priority}
+	            , #{menuDto.title}
+	            , #{menuDto.linkUrl}
+	            , #{menuDto.visible}
+	        )
+	        </foreach>
+	    </if>
+	</insert>
+	
+	<update id="update" parameterType="menuDto">   	
+     	UPDATE cs_menu
+     	SET
+            parent_menu_seq = #{parentMenuSeq}
+            , standard = #{standard}
+            , depth = #{depth}
+            , priority = #{priority}
+            , title = #{title}
+            , link_url = #{linkUrl}
+            , visible = #{visible}    
+	    
+	   	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+	       	<if test="menuSeq > 0"> 
+  				AND menu_seq = #{menuSeq} 
+  			</if>
+  		</trim>
+	</update>
+
+
+	<delete id="delete" parameterType="list">
+	<if test="list.size != 0">
+	    
+	    DELETE FROM cs_menu   
+  		
+  		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+  			AND menu_seq in
+  			<foreach collection="list" item="menuDto" open="(" separator="," close=")">
+  			<if test="menuDto.menuSeq != null and menuDto.menuSeq > 0">
+  				 #{menuDto.menuSeq} 
+  			</if>
+  			</foreach>
+	    </trim>
+	</if>
+	</delete>
+		
+<!-- 	
+	
+	<update id="mutiQueryUpdate" parameterType="map">
+		<if test="dtoList.size != 0">
+	       	<foreach collection="dtoList" item="menuDto" separator=";">
+	       		
+	       		UPDATE cs_menu
+	       		SET
+		            parent_menu_seq = #{menuDto.parent_menu_seq},
+		            standard = #{menuDto.standard},
+		            depth = #{menuDto.depth},
+		            priority = #{menuDto.priority},
+		            title = #{menuDto.title},
+		            visible = #{menuDto.visible}    
+		    
+		   	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		       	<if test="menuDto.menu_seq != 0"> 
+	  				AND menu_seq = #{menuDto.menu_seq} 
+	  			</if>
+	  		</trim>
+	        </foreach>
+	    </if>
+	</update>
+-->	
+</mapper>

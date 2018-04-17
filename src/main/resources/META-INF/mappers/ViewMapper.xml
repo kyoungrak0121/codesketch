@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.spring.code.vo.dao.ViewDao">
+	<cache />  
+	
+	<resultMap id="viewResultMap" type="ViewDto">
+		<id property="viewSeq" column="view_seq" />
+		<result property="requestUri" column="request_uri"/>
+		<result property="filePath" column="file_path"/>
+		
+		<result property="title" column="title"/>
+		<result property="visible" column="visible"/>
+		
+		<collection property="sectionDtoList" ofType="SectionDto" resultMap="sectionDtoResult"  columnPrefix="s_"/>
+		
+	</resultMap>
+	
+	<resultMap id="sectionDtoResult" type="SectionDto">
+		<id property="sectionSeq" column="section_seq"/>
+		<result property="viewSeq" column="view_seq" />
+		<result property="priority" column="priority"/>
+		<result property="filePath" column="file_path"/>
+		<result property="visible" column="visible"/>
+	</resultMap>
+	
+	<select id="select" resultMap="viewResultMap" parameterType="map">
+ 	
+  		SELECT 
+ 			SQL_CALC_FOUND_ROWS v.*, 
+ 			
+ 			r.view_seq as s_view_seq,
+ 			r.section_priority as s_priority,
+ 			
+			s.section_seq as s_section_seq, 
+			s.file_path as s_file_path, 
+			s.visible as s_visible
+			
+  		FROM 
+  					  cs_view v 
+  			LEFT JOIN cs_view_section_relation r USING (view_seq)
+  			LEFT JOIN cs_section s USING(section_seq)
+ 		
+ 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+ 			<if test="view_seq > 0"> 
+ 				AND v.view_seq like #{view_seq} 
+ 			</if>
+ 			<if test="title != null"> 
+ 				AND v.title like #{title} 
+ 			</if>
+ 			<if test="request_uri != null "> 
+ 				AND v.request_uri like #{request_uri} 
+ 			</if>
+ 			<if test="file_path != null "> 
+ 				AND v.file_path like #{file_path} 
+ 			</if>
+ 			<if test="visible != null"> 
+ 				AND v.visible like #{visible} 
+ 			</if>
+ 		</trim>	
+  		
+  		ORDER BY
+  		<choose>
+  			<when  test="sidx != null and sidx !='' "> 
+	  			${sidx} 
+	  			<if test="sord != null and sord !=''"> 
+	  				${sord}
+	  			</if>
+  			</when>
+  			<otherwise>
+  				view_seq, r.section_priority
+  			</otherwise>
+  		</choose>
+  		
+  		<if test="startIndex != null and endIndex != null"> 
+  			LIMIT #{startIndex}, #{endIndex} 
+  		</if>
+  		
+	</select>
+	
+	<insert id="insert" parameterType="list" useGeneratedKeys="true"  keyProperty="viewSeq">
+	    <if test="list.size != 0">
+	        INSERT INTO cs_view (
+	            view_seq,title,request_uri,file_path, visible
+	        )
+	        VALUES
+	        <foreach collection="list" item="viewDto" separator=",">
+	        (
+	              #{viewDto.viewSeq}
+	            , #{viewDto.title}
+	            , #{viewDto.requestUri}
+	            , #{viewDto.filePath}
+	            , #{viewDto.visible}
+	           
+	        )
+	        </foreach>
+	    </if>
+	</insert>
+	
+	
+	<update id="update" parameterType="viewDto">   	
+     	UPDATE cs_view
+     	SET
+              view_seq = #{viewSeq}
+            , title = #{title}
+            , request_uri = #{requestUri}
+            , file_path = #{filePath}
+            , visible = #{visible}    
+	    
+	   	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+	       	<if test="viewSeq > 0"> 
+  				AND view_seq = #{viewSeq} 
+  			</if>
+  		</trim>
+	</update>
+
+
+	<delete id="delete" parameterType="list">
+	<if test="list.size != 0">
+	    
+	    DELETE FROM cs_view   
+  		
+  		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+  			AND view_seq in
+  			<foreach collection="list" item="viewDto" open="(" separator="," close=")">
+  			<if test="viewDto.viewSeq != null and viewDto.viewSeq > 0">
+  				 #{viewDto.viewSeq} 
+  			</if>
+  			</foreach>
+	    </trim>
+	</if>
+	</delete>
+	
+	
+</mapper>

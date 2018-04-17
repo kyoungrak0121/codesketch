@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.spring.code.vo.dao.SectionDao">
+	<cache /> 
+	
+	<resultMap id="sectionResultMap" type="sectionDto">
+		<id property="sectionSeq" column="section_seq" />
+		<result property="viewSeq" column="view_seq"/>
+		<result property="filePath" column="file_path"/>
+	</resultMap>
+	
+	<select id="select" resultMap="sectionResultMap" parameterType="map">
+
+	SELECT
+			SQL_CALC_FOUND_ROWS s.*,
+			r.view_seq ,
+			r.section_priority as priority 
+	FROM 
+				  cs_section s
+		LEFT JOIN cs_view_section_relation r USING (section_seq)
+ 		
+ 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+ 			<if test="section_seq > 0"> 
+ 				AND s.section_seq like #{section_seq} 
+ 			</if>
+ 			<if test="view_seq > 0"> 
+ 				AND r.view_seq like #{view_seq} 
+ 			</if>
+ 			<if test="title != null"> 
+ 				AND s.title like #{title} 
+ 			</if>
+ 			<if test="file_path != null "> 
+ 				AND s.file_path like #{file_path} 
+ 			</if>
+ 			<if test="visible != null"> 
+ 				AND s.visible like #{visible} 
+ 			</if>
+ 		</trim>	
+  		
+  		ORDER BY
+  		<choose>
+  			<when  test="sidx != null and sidx !='' "> 
+	  			${sidx} 
+	  			<if test="sord != null and sord !=''"> 
+	  				${sord}
+	  			</if>
+  			</when>
+  			<otherwise>
+  				section_seq
+  			</otherwise>
+  		</choose>
+  		
+  		<if test="startIndex != null and endIndex != null"> 
+  			LIMIT #{startIndex}, #{endIndex} 
+  		</if>
+  		
+	</select>
+	
+	<insert id="insert" parameterType="list" useGeneratedKeys="true"  keyProperty="sectionSeq">
+	    <if test="list.size != 0">
+	        INSERT INTO cs_section (
+	            section_seq,title,file_path,visible
+	        )
+	        VALUES
+	        <foreach collection="list" item="sectionDto" separator=",">
+	        (
+	              #{sectionDto.sectionSeq}
+	            , #{sectionDto.title}	            
+	            , #{sectionDto.filePath}
+	            , #{sectionDto.visible}
+	           
+	        )
+	        </foreach>
+	    </if>
+	</insert>
+	
+	<update id="update" parameterType="sectionDto">   	
+     	UPDATE cs_section
+     	SET
+              title = #{title}
+            , file_path = #{filePath}
+            , visible = #{visible}    
+            
+	   	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+	       	<if test="sectionSeq > 0"> 
+  				AND section_seq = #{sectionSeq} 
+  			</if>
+  		</trim>
+	</update>
+
+
+	<delete id="delete" parameterType="list">
+	<if test="list.size != 0">
+	    
+	    DELETE FROM cs_section   
+  
+  		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+  			AND section_seq in
+  			<foreach collection="list" item="sectionDto" open="(" separator="," close=")">
+  			<if test="sectionDto.sectionSeq != null and sectionDto.sectionSeq > 0">
+  				 #{sectionDto.sectionSeq} 
+  			</if>
+  			</foreach>
+	    </trim>
+	</if>
+	</delete>
+	
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+ 
+<tiles-definitions>
+    
+<!-- Default -->
+    <definition name="users" template="/WEB-INF/views/users/layout/layout.jsp">
+    	<put-attribute name="html_head" 	value="/WEB-INF/views/users/layout/html_head.jsp"/>
+    	<put-attribute name="common_css" 	value="/WEB-INF/views/users/layout/common_css.jsp"/>
+    	<put-attribute name="include_css" 	value=""/>
+    	
+    	<put-attribute name="header" 		value="/WEB-INF/views/users/layout/header.jsp"/>
+        <put-attribute name="body" 			value=""/>
+        <put-attribute name="menu" 			value=""/>
+        <put-attribute name="footer" 		value="/WEB-INF/views/users/layout/footer.jsp"/>
+        
+        <put-attribute name="common_js" 	value="/WEB-INF/views/users/layout/common_js.jsp"/>
+        <put-attribute name="html_footer" 	value="/WEB-INF/views/users/layout/html_footer.jsp"/>
+        <put-attribute name="include_js" 	value=""/>
+    </definition>
+
+    <definition name="users/*/*.tiles" extends="users">
+        <put-attribute name="include_css" 	value="/css/users/{1}/{2}.css"/>
+        <put-attribute name="body" 			value="/WEB-INF/views/users/{1}/{2}.jsp"/>
+        <put-attribute name="include_js" 	value="/js/users/{1}/{2}.js"/>
+    </definition>
+    <definition name="users/*/*/*.tiles" extends="users">
+        <put-attribute name="include_css" 	value="/css/users/{1}/{2}/{3}.css"/>
+        <put-attribute name="body" 			value="/WEB-INF/views/users/{1}/{2}/{3}.jsp"/>
+        <put-attribute name="include_js" 	value="/js/users/{1}/{2}/{3}.js"/>
+    </definition>
+    
+<!-- Admin -->
+    <definition name="admin" template="/WEB-INF/views/admin/layout/layout.jsp">
+    	<put-attribute name="html_head" 	value="/WEB-INF/views/admin/layout/html_head.jsp"/>
+    	<put-attribute name="common_css" 	value="/WEB-INF/views/admin/layout/common_css.jsp"/>
+		<put-attribute name="include_css" 	value=""/>
+       
+        <put-attribute name="header" 		value="/WEB-INF/views/admin/layout/header.jsp"/>
+        <put-attribute name="body" 			value=""/>
+        <put-attribute name="menu" 			value=""/>
+        <put-attribute name="footer" 		value="/WEB-INF/views/admin/layout/footer.jsp"/>
+       
+        <put-attribute name="common_js" 	value="/WEB-INF/views/admin/layout/common_js.jsp"/>
+        <put-attribute name="include_js" 	value=""/>
+    </definition>
+	
+	
+	<!-- admin login layout -->
+    <definition name="admin/*/login.tiles" extends="admin">
+   		<put-attribute name="header" 		value=""/>
+  	  	<put-attribute name="include_css" 	value="/css/admin/{1}/login.css"/>
+        <put-attribute name="body" 			value="/WEB-INF/views/admin/{1}/login.jsp"/>
+        <put-attribute name="include_js" 	value="/js/admin/{1}/login.js"/>
+        <put-attribute name="footer" 		value=""/>
+    </definition>
+    
+	
+    <definition name="admin/*/*.tiles" extends="admin">
+    	<put-attribute name="include_css" 	value="/css/admin/{1}/{2}.css"/>
+        <put-attribute name="body" 			value="/WEB-INF/views/admin/{1}/{2}.jsp"/>
+        <put-attribute name="include_js" 	value="/js/admin/{1}/{2}.js"/>
+    </definition>
+    
+    
+    <definition name="admin/*/*/*.tiles" extends="admin">
+  	  	<put-attribute name="include_css" 	value="/css/admin/{1}/{2}/{3}.css"/>
+        <put-attribute name="body" 			value="/WEB-INF/views/admin/{1}/{2}/{3}.jsp"/>
+        <put-attribute name="include_js" 	value="/js/admin/{1}/{2}/{3}.js"/>
+    </definition>
+    
+    
+    
+
+<!-- No tiles -->
+    <definition name="no-tiles" template="/WEB-INF/views/noTilesLayout.jsp">
+    	<put-attribute name="html_head" 	value=""/>
+    	<put-attribute name="common_css" 	value=""/>
+    	<put-attribute name="include_css" 	value=""/>
+    	
+    	<put-attribute name="header" 		value=""/>
+        <put-attribute name="body" 			value=""/>
+        <put-attribute name="menu" 			value=""/>
+        <put-attribute name="footer" 		value=""/>
+        
+        <put-attribute name="common_js" 	value=""/>
+        <put-attribute name="html_footer" 	value=""/>
+        <put-attribute name="include_js" 	value=""/>
+    </definition>
+    
+    <definition name="*.no-tiles" extends="no-tiles">
+        <put-attribute name="body" value="/WEB-INF/views/{1}.jsp"/>
+    </definition>
+    <definition name="*/*.no-tiles" extends="no-tiles">
+        <put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp"/>
+    </definition>
+    <definition name="*/*/*.no-tiles" extends="no-tiles">
+        <put-attribute name="body" value="/WEB-INF/views/{1}/{2}/{3}.jsp"/>
+    </definition>
+     <definition name="*/*/*/*.no-tiles" extends="no-tiles">
+        <put-attribute name="body" value="/WEB-INF/views/{1}/{2}/{3}/{4}.jsp"/>
+    </definition>
+    <definition name="*/*/*/*/*.no-tiles" extends="no-tiles">
+        <put-attribute name="body" value="/WEB-INF/views/{1}/{2}/{3}/{4}/{5}.jsp"/>
+    </definition>
+    
+</tiles-definitions>
