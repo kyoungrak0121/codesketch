@@ -6,12 +6,11 @@ import java.util.Map;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.session.SqlSession;
-import org.spring.code.helper.LoggerHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public abstract class GenericDaoImpl<T> implements GenericDao<T> {
+public abstract class CommonDaoImpl<T> implements CommonDao<T> {
 		
 	@Autowired
 	protected SqlSession sqlSession;
@@ -20,8 +19,8 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T> {
 	    this.sqlSession = sqlSession;
 	}
 	
+
 	// 바인딩 전  ?? 형태로 보는 경우
-	
 	public String getMapperSql(String queryId, T vo){
 		return sqlSession.getConfiguration().getMappedStatement(queryId).getSqlSource().getBoundSql(vo).getSql();
 	}
@@ -46,13 +45,21 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T> {
 		}
 		return query; 
 	}
+
 	
 	@Override
-	public List<T> select(Map<?,?> params) { return null; }
-	public List<T> select(String namespace, Map<?,?> params){ 
-		LoggerHelper.debug(this, getMapperQuery(namespace , params));
+	public List<T> selectList(Map<?,?> params) { return null; }
+	public List<T> selectList(String namespace, Map<?,?> params){ 
+//		LoggerHelper.debug(this, getMapperQuery(namespace , params));
 		return sqlSession.selectList(namespace , params); 
 	}
+	
+	@Override
+	public Object selectOne(Map<?, ?> params) { return null;}
+	public Object selectOne(String namespace, Map<?, ?> params) { 
+		return sqlSession.selectOne(namespace , params); 
+	}
+	
 	
 	@Override
 	public Object insert(List<T> vo) { return null; }

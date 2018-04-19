@@ -31,7 +31,6 @@ public class CommonController {
 	private CodeService codeService;
 
 	
-	
 	/* common object declaration */	
 	// user, admin 에서 공통으로 쓰는 static 변수. 데이터 변경 시 다시 대입 해줘야한다. 
 	protected static Map<String,CodeDto> codeDtoMap ;
@@ -57,16 +56,19 @@ public class CommonController {
     }
 
 	/* params parser helper Method */
-	protected Map<String,Object> paserRequetToHashMap(HttpServletRequest request){
+	protected Map<String, Object> paserRequetToHashMap(HttpServletRequest req){
+		
 		Map<String,Object> params = new HashMap<>();
 		
-		Enumeration<?> enumber = request.getParameterNames();
+		Enumeration<?> enumber = req.getParameterNames();
 
 		while (enumber.hasMoreElements()) {
 			String key = enumber.nextElement().toString();
-			Object value = request.getParameter(key);
+			Object value = req.getParameter(key);
 			params.put(key, value);  
 		}
+		
+		
 		return params;
 	}
 	

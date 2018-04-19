@@ -1,6 +1,5 @@
 package org.spring.code.services;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,7 @@ public class CodeService{
 	private CodeDao codeDao;	
 	
 	public List<CodeDto> getCodeDtoList(Map<?,?> params ) {
-		return codeDao.select(params);
+		return codeDao.selectList(params);
 	}
 	
 	public Map<String,CodeDto> getCodeDtoMap(Map<?,?> params) {
@@ -33,48 +32,18 @@ public class CodeService{
 	}
 	
 	@Transactional (rollbackFor = Exception.class)
-	public Map<String,Object> saveCodeDto(List<CodeDto> insertCodeDto, List<CodeDto> updateCodeDto, List<CodeDto> deleteCodeDto ){
-		// insert, update, delete batch로 한번에 처리 
-	
-		Map<String,Object> resultBundle = new HashMap<>();
-		
-		if(insertCodeDto != null && insertCodeDto.size() != 0) {
-			//collectionBundle.put("dtoList", insertCodeDto);
-			resultBundle.put("insert",insertCodeDto(insertCodeDto));
-		}	
-		
-		// error 발생
-		//updateCodeDto.add((T) new CodeDto());
-		
-		if(updateCodeDto != null && updateCodeDto.size() != 0) {
-			//collectionBundle.put("dtoList", updateCodeDto);
-			
-			List<Object> resultList = new ArrayList<>();
-			
-			for(CodeDto vo : updateCodeDto){
-				resultList.add(updateCodeDto(vo));
-			}
-			resultBundle.put("update",resultList);
-		}
-		
-		if(deleteCodeDto != null && deleteCodeDto.size() != 0) {
-			//collectionBundle.put("dtoList", deleteCodeDto);
-			resultBundle.put("delete",deleteCodeDto(deleteCodeDto));
-		}
-		
-		return resultBundle;
-	}
-	
-	private Object insertCodeDto(List<CodeDto> vo){
+	public Object insertCodeDto(List<CodeDto> vo){
 		return codeDao.insert(vo);
 	}
 	
-	private Object updateCodeDto(CodeDto vo){
+	@Transactional (rollbackFor = Exception.class)
+	public Object updateCodeDto(CodeDto vo){
 		
 		return codeDao.update(vo);
 	}
 	
-	private Object deleteCodeDto(List<CodeDto> vo){
+	@Transactional (rollbackFor = Exception.class)
+	public Object deleteCodeDto(List<CodeDto> vo){
 		return codeDao.delete(vo);
 	}
 	

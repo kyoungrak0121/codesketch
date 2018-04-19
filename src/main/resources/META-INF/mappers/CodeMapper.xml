@@ -5,15 +5,15 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="org.spring.code.vo.dao.CodeDao">
-	<cache />  
-	
+	<cache />
+
 	<resultMap id="codeResultMap" type="codeDto">
 		<id property="codeSeq" column="code_seq" />
 	</resultMap>
 	
   	<select id="select" resultMap="codeResultMap" parameterType="map">
  	
-  		SELECT SQL_CALC_FOUND_ROWS *, CONCAT(type,seq) as code
+  		SELECT *, CONCAT(type,seq) as code
   		FROM cs_code
   		<trim prefix="WHERE" prefixOverrides="AND |OR ">
  			<if test="type != null"> 

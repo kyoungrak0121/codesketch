@@ -5,8 +5,8 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="org.spring.code.vo.dao.MenuDao">
-	<cache />  
-	
+	<cache />
+
 	<resultMap id="menuResultMap" type="menuDto">
 		<id property="menuSeq" column="menu_seq" />
 		<result property="parentMenuSeq" column="parent_menu_seq"/>
@@ -16,8 +16,7 @@
 
   	<select id="select" resultMap="menuResultMap" parameterType="map">
  	
-  		SELECT 
-  			SQL_CALC_FOUND_ROWS * 
+  		SELECT  * 
   		FROM cs_menu 
  		<trim prefix="WHERE" prefixOverrides="AND |OR ">
  			<if test="menu_seq > 0"> 

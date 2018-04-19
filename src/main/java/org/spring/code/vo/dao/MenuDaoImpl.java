@@ -7,14 +7,14 @@ import org.spring.code.vo.dto.MenuDto;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MenuDaoImpl extends GenericDaoImpl<MenuDto> implements MenuDao{
+public class MenuDaoImpl extends CommonDaoImpl<MenuDto> implements MenuDao{
 	
 	@Override
-	public List<MenuDto> select(Map<?,?> params)  { 
+	public List<MenuDto> selectList(Map<?,?> params)  { 
 		// TODO Auto-generated method stub
 		String queryId = MenuDao.NAMESPACE+"select";
 		
-		return super.select(queryId, params);
+		return super.selectList(queryId, params);
 	}
 	
 	@Override

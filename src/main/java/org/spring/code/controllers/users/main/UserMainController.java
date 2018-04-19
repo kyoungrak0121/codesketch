@@ -17,6 +17,7 @@ public class UserMainController extends UserFrontController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(ModelMap modelMap , final HttpServletRequest req ){
 		init();
+		
 		String forward = viewDtoMap.get(req.getRequestURI()).getFilePath();
 		
 		return forward;

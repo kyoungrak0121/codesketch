@@ -10,7 +10,7 @@
 			<div class="col-6">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
 					<li class="nav-item">
-						<a class="nav-link active" id="relatedSectionBtn" data-toggle="tab" href="#" role="tab">Related</a>
+						<a class="nav-link active" id="relationSectionBtn" data-toggle="tab" href="#" role="tab">Relation</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" id="allSectionBtn" data-toggle="tab" href="#" role="tab" >All</a>

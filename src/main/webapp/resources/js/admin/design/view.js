@@ -45,16 +45,16 @@ $(document).ready(function() {
 	
 	// Relation Popup Event
 	// Reated Btn clicked in popup
-	$("body").on("click","#relatedSectionBtn",function(){
+	$("body").on("click","#relationSectionBtn",function(){
 		
-		var $sectionGrid = $("#sectionRelationJqgrid"),
-			selRowId = $("#viewRelationJqgrid").jqGrid("getGridParam", "selrow");
+		var $sectionGrid = $("#sectionRelationJqgrid");
 		
 		$("#sectionRelationJqgridPager_left").show();
 		
 		$sectionGrid.jqGrid("showCol","priority");
+		
 		// current select row section load
-		getDataSectionJqgrid(selRowId);
+		getDataSectionJqgrid("relation");
 		
 	});
 	
@@ -65,56 +65,85 @@ $(document).ready(function() {
 		
 		$("#sectionRelationJqgridPager_left").hide();
 		$sectionGrid.jqGrid("hideCol","priority");
-		getDataSectionJqgrid(0);
+		getDataSectionJqgrid("all");
 	});
 	
 	$("body").on("click","#relationSaveBtn",function(){
 		// related save 
-		var viewGId = "viewRelationJqgrid" , sectionGID = "sectionRelationJqgrid", 
-			viewArr, sectionArr ;		
+		var $this = $(this),
+			viewGId = "viewRelationJqgrid" , 
+			sectionGId = "sectionRelationJqgrid", 
+			viewArr={}, 
+			sectionArr ={};		
 			
 		viewArr = getSelectedJqGridData(viewGId) ;
-			 
-		if( viewArr.length > 0){
 		
+		if(! isEmpty(viewArr) ){
+			
+			// validation check
+			
 			if(! $("#allSectionBtn").hasClass("active")){
 				// Related Section
 				// section update info 
-				
-				if(saveJqGrid(sectionGID)){
-					sectionArr = getJqGridData(sectionGID);
+				if(saveJqGrid(sectionGId)){
 					
-					console.log(viewArr);
-					console.log(sectionArr);
+					sectionArr = getJqGridData(sectionGId);
 					
-					if(! isEmpty(sectionArr)){
-						
-					}else{
+					if(isEmpty(sectionArr)){
 						// 변경 값이 없습니다.
 						var messageCode = "E000304";
 						showModalMessage(messageCode);
+						return ;
 					}
 				}
 			}else{
 				// All Section 
 				// view-section relateed 
+				sectionArr["insert"] = getSelectedJqGridData(sectionGId);	
 				
-				sectionArr = getSelectedJqGridData(sectionGID);	
-				
-				if(sectionArr.length > 0){
-					
-					console.log(viewArr);
-					console.log(sectionArr);
-					
-					resetSelectionJqGrid(viewGId);
-					resetSelectionJqGrid(sectionGID);
-					
-				}else{
+				if(isEmpty(sectionArr) ){
+					// 선택 값이 없습니다.
 					var messageCode = "E000600";
 					showModalMessage(messageCode);
 					return;
 				}
 			}
+			
+			// server call 
+			$.ajax({
+				method: "POST",
+				url: "/admin/design/view/relation/save",
+				dataType: "json",
+				data: {"view" : JSON.stringify(viewArr), "section" : JSON.stringify(sectionArr)  },
+				beforeSend:function(xhr){
+					$this.removeClass("requestRunning").addClass("requestRunning");
+				},
+				success:function(result){	
+					// 서버로 부터 받은 메시지 코드 
+					var messageCode = result.code ; 
+					if(result.value === "success"){
+						
+						showModalMessage(messageCode);
+						
+						clearDataJqGrid(viewGId);
+						clearDataJqGrid(sectionGId);
+						
+						$("#"+viewGId).trigger("reloadGrid");
+						$("#"+sectionGId).trigger("reloadGrid");
+					}else{
+						showModalMessage(messageCode);
+					}
+				},
+				
+				error:function() {
+					var messageCode = "E000500";
+					showModalMessage(messageCode);
+				},
+				complete: function() {
+					$this.removeClass("requestRunning");
+		        }
+			});	
+			
 		}else{
 			var messageCode="E000600";
 			showModalMessage(messageCode);
@@ -148,7 +177,8 @@ function loadPopupViewJqgrid(){
         
         onSelectRow: function(rowid, status, e){ 
         	if(! $("#allSectionBtn").hasClass("active")){
-        		getDataSectionJqgrid(rowid);
+        		// 여기서 가져오기 
+        		getDataSectionJqgrid("relation");
         	}
         },
     });
@@ -187,13 +217,13 @@ function loadPopupSectionJqgrid(){
 	    },
 		ondblClickRow : function(rowid,iRow,iCol,e){
 			var $this = $(this), gID = $.jgrid.jqID(this.id); 
-			$this.find("#"+rowid).attr("aria-selected") == "false"	? 	$this.setSelection(rowid) : "" ;			
+			$this.find("#"+rowid).attr("aria-selected") == "false" ? 	$this.setSelection(rowid) : "" ;			
 			$("#"+gID+"_iledit").trigger('click');
 		},
 	});
 }
 
-function getDataSectionJqgrid(rowid){
+function getDataSectionJqgrid(type = "relation"){
 	
 	var $viewGrid = $("#viewRelationJqgrid"), 
 		$sectionJqgrid = $("#sectionRelationJqgrid");
@@ -202,15 +232,32 @@ function getDataSectionJqgrid(rowid){
 	
 	$sectionJqgrid.jqGrid("clearGridData", true);
 	
-	if(rowid !== null){
+	// 
+	if( type === "relation"){
+		console.log("relation");
+		var viewSeq = $viewGrid.jqGrid("getGridParam", "selrow");
 		
-		var view_seq = $viewGrid.jqGrid ("getCell", rowid, "viewSeq");
+		viewSeq = viewSeq ? viewSeq : 0 ;
 		
-		view_seq = view_seq === false ? 0 : view_seq ;
+		console.log(viewSeq);
 		
-		$sectionJqgrid.jqGrid("setGridParam",{ "url":"/admin/design/section/load" , "postData":{ "view_seq": view_seq}, }); 
-	}else{
-		$sectionJqgrid.jqGrid("setGridParam",{ "url":"" ,}); 
+		$sectionJqgrid.jqGrid("setGridParam",{ 
+												"url":"/admin/design/view/load" , 
+												"postData":{ "view_seq": viewSeq},
+												"jsonReader" : {			
+													root : function (obj) { return obj.data[0].sectionDtoList; }
+												},
+											});
+		
+	}else{ 
+		console.log("all");
+		$sectionJqgrid.jqGrid("setGridParam",{ 
+												"url":"/admin/design/section/load",
+												"postData":{},
+												"jsonReader" : {			
+													root : function (obj) { return obj.data; }
+												},
+											}); 
 	}
 		
 	$sectionJqgrid.trigger('reloadGrid');

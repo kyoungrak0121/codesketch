@@ -4,7 +4,7 @@
 <!-- content-wrapper -->
 <div class="content-wrapper">
 
-	<!-- page button -->`
+	<!-- page button -->
 	
 	<c:set var="buttoms">
 		 <button type="button" id="relationBtn" class="btn btn-sm btn-outline-success">View-Section</button>

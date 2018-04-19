@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,10 +39,11 @@ public class AdminSectionController extends AdminFrontController {
 		Map<String,Object> params = paserRequetToHashMap(req);	
 		
  		JqgridDto jqgridDto = new JqgridDto(); 
- 				
- 		jqgridDto.setData(sectionService.getSectionDto(params));
+ 		List<SectionDto> sectionList = sectionService.getSectionDto(params) ; 
  		
- 		pagingService.setPagingTotalPage();
+ 		jqgridDto.setData(sectionList);
+ 		
+ 		pagingService.setPagingTotalPage(sectionList.size());
  	
  		jqgridDto.setPagingDto(pagingService.getPagingDto());
  		
@@ -61,10 +63,28 @@ public class AdminSectionController extends AdminFrontController {
  		List<SectionDto> updateDto = JsonHelper.getJsonToObjectList(jsonData, "update", SectionDto.class);
  		List<SectionDto> deleteDto = JsonHelper.getJsonToObjectList(jsonData, "delete", SectionDto.class);
  		
- 		sectionService.saveSectionDto( insertDto, updateDto, deleteDto );
+ 		saveSectionDto( insertDto, updateDto, deleteDto );
 
  		return ResponseHelper.send(codeDtoMap.get("E000200"), HttpStatus.OK);
 	}
 	
 	
+	@Transactional (rollbackFor = Exception.class)
+	public void saveSectionDto(List<SectionDto> insertDto, List<SectionDto> updateDto, List<SectionDto> deleteDto ){
+		// insert, update, delete batch로 한번에 처리 
+	
+		if(insertDto != null && insertDto.size() != 0) {
+			sectionService.insertSectionDto(insertDto);
+		}
+		
+		if(updateDto != null && updateDto.size() != 0) {
+			for(SectionDto vo : updateDto){
+				sectionService.updateSectionDto(vo);
+			}
+		}
+		
+		if(deleteDto != null && deleteDto.size() != 0) {
+			sectionService.deleteSectionDto(deleteDto);
+		}
+	}
 }

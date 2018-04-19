@@ -9,6 +9,7 @@ public class SectionDto extends GenericDto {
 	
 	private String title ;
 	private String filePath ;
+	
 	private int priority;
 	private char visible;
 	

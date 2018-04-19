@@ -15,7 +15,7 @@ public class  LoggerHelper {
 	/* debug helper Method */
 	public static void debug(Object obj,String str) {
 		Logger.debug("=================================================================================================");
-		Logger.debug("\n["+ obj.getClass().toString() +"]\n"+"=> " + str.replaceAll("\n","\n\t\t")+"\n"); 
+		Logger.debug("\n["+ obj.getClass().toString() +"]\n"+"=> " + str.replaceAll("\n","\r\n\t")+"\n"); 
 		Logger.debug("=================================================================================================");
 	}
 	public static void debug(Object obj,Object vo) {

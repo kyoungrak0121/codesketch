@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.spring.code.helper.JsonHelper;
 import org.spring.code.helper.LoggerHelper;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,7 +16,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 public class GlobalInterceptorHandler extends HandlerInterceptorAdapter {
 	
 
-	// 컨트롤러 실행 직전에 수행됩니다.
+	// 컨트롤러 실행 (직)전에 수행됩니다.
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {	
     	
@@ -27,13 +28,15 @@ public class GlobalInterceptorHandler extends HandlerInterceptorAdapter {
         
         LoggerHelper.debug(this,  "\n[Request URI]:"	+ request.getRequestURI()
         						+ "\n[Handler Class]:"	+ method.getBean().getClass()
-        						+ "\n[Handler Method]:"	+ method.getMethod().getName());
+        						+ "\n[Handler Method]:"	+ method.getMethod().getName()
+        						+ "\n[Requset Prameta]:"+ JsonHelper.toJson(request.getParameterMap()).toString()
+        				 );
         
         return super.preHandle(request, response, handler);
     }
  
 
-    // 컨트롤러 실행 직후에 수행됩니다.
+    // 컨트롤러 실행 직)후에 수행됩니다.
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
     	//LoggerHelper.debug(this,"postHandle call......");

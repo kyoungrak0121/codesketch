@@ -34,34 +34,44 @@ public class JsonHelper {
 		return  gson.toJson(obj);
 	}
 	
-	public static Object getJsonToObject(String json,Class<Object> cls) {
+	public static <E>Object getJsonToObject(String json,Class<?> cls) {
 		
 		//Type type = new TypeToken<T>() {}.getType();
 		// Convert JSON to Java Object
-		Object targetObj = gson.fromJson(json, cls);
+		Object targetObj = gson.<E>fromJson(json, cls);
 		return targetObj;
 	}
 	
 	// Generic Method
+	// 메서드 아규먼트에 타입 매개변수 T가 선언되어 있으면 메서드의 리턴 타입 앞에 제너릭 타입을 선언해야 한다.
 	public static <E> List<E> getJsonToObjectList(String json, String key, Class<?> cls){
 		
-		if(! isJsonKey(json, key)){ return null; }
-		
-		JsonArray jsonArray = jsonParser.parse(json).getAsJsonObject().get(key).getAsJsonArray();
-		
+		JsonElement jsonElement = jsonParser.parse(json);
+		JsonArray jsonArray = null ;
 		List<E> list =  new ArrayList<>();
-        
-		for(final JsonElement jsonElement : jsonArray){
-			E entity = gson.<E>fromJson(jsonElement, cls);
+		
+		if(jsonElement.isJsonArray() ){ 
+			jsonArray = jsonElement.getAsJsonArray();
+		}else {
+			JsonObject jsonObject = jsonElement.getAsJsonObject();
+			
+			if(!isJsonKey(jsonObject, key)) {
+				return null ;
+			}
+			jsonArray = jsonObject.get(key).getAsJsonArray();
+		}
+		
+		for(final JsonElement element : jsonArray){
+			E entity = gson.<E>fromJson(element, cls);
 			list.add(entity);
         }
 
 		return list;
 	}
 	
-	public static boolean isJsonKey(String json ,String key){
-		JsonObject jsonObject = jsonParser.parse(json).getAsJsonObject();
-		if(jsonObject.get(key) == null || jsonObject.get(key).isJsonNull() ){ 
+	public static boolean isJsonKey(JsonObject json ,String key){
+		
+		if( json.get(key) == null || json.get(key).isJsonNull() ){  
 			return false; 
 		}
 		return true;

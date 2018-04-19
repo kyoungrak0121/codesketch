@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,10 +42,11 @@ public class AdminMenuController extends AdminFrontController {
 
 		// get MenuDtoList in database
  		JqgridDto jqgridDto = new JqgridDto(); 
- 				
- 		jqgridDto.setData(menuService.getMenuDto(params));
+ 		List<MenuDto> menuList = menuService.getMenuDto(params) ; 
  		
- 		pagingService.setPagingTotalPage();
+ 		jqgridDto.setData(menuList);
+ 		
+ 		pagingService.setPagingTotalPage(menuList.size());
  	
  		jqgridDto.setPagingDto(pagingService.getPagingDto());
 
@@ -65,9 +67,32 @@ public class AdminMenuController extends AdminFrontController {
  		List<MenuDto> updateDto = JsonHelper.getJsonToObjectList(jsonData, "update", MenuDto.class);
  		List<MenuDto> deleteDto = JsonHelper.getJsonToObjectList(jsonData, "delete", MenuDto.class);
  		
- 		menuService.saveMenuDto( insertDto, updateDto, deleteDto );
+ 		saveMenuDto( insertDto, updateDto, deleteDto );
 
  		return ResponseHelper.send(codeDtoMap.get("E000200"), HttpStatus.OK);
+	}
+	
+	@Transactional (rollbackFor = Exception.class)
+	public void saveMenuDto(List<MenuDto> insertMenuDto, List<MenuDto> updateMenuDto, List<MenuDto> deleteMenuDto ){
+		// insert, update, delete batch로 한번에 처리 
+		
+		if(insertMenuDto != null && insertMenuDto.size() != 0) {
+			//collectionBundle.put("dtoList", insertMenuDto);
+			menuService.insertMenuDto(insertMenuDto);
+		}	
+				
+		if(updateMenuDto != null && updateMenuDto.size() != 0) {
+			//collectionBundle.put("dtoList", updateMenuDto);
+			for(MenuDto vo : updateMenuDto){
+				menuService.updateMenuDto(vo);
+			}
+		}
+		
+		if(deleteMenuDto != null && deleteMenuDto.size() != 0) {
+			//collectionBundle.put("dtoList", deleteMenuDto);
+			menuService.deleteMenuDto(deleteMenuDto);
+		}
+		
 	}
 	
 }

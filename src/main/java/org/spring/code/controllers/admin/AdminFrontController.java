@@ -30,9 +30,10 @@ public class AdminFrontController extends CommonController{
 	}
 	
 	/* params parser helper Method */
-	protected Map<String,Object> paserRequetToHashMap(HttpServletRequest request){
+	@Override
+	protected Map<String,Object> paserRequetToHashMap(HttpServletRequest req){
 		
-		Map<String,Object> params = super.paserRequetToHashMap(request);
+		Map<String,Object> params = super.paserRequetToHashMap(req);
 		
 		if(params.get("page") != null && params.get("pageSize") != null){
 		

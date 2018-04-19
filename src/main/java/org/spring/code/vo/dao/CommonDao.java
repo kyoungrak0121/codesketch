@@ -3,11 +3,12 @@ package org.spring.code.vo.dao;
 import java.util.List;
 import java.util.Map;
 
-public interface GenericDao<T> {
+public interface CommonDao<T> {
 	
 	public final static String NAMESPACE = "org.spring.code.vo.dao.";
 	
-    public List<T> select(Map<?, ?> params);
+    public List<T> selectList(Map<?, ?> params);
+    public Object selectOne(Map<?, ?> params);
     
     public Object insert(List<T> vo);
     public Object update(T vo);

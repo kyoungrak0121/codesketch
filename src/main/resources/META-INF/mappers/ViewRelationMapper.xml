@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.spring.code.vo.dao.ViewRelationDao">
+	 <cache-ref namespace="org.spring.code.vo.dao.ViewDao" />
+	
+	<insert id="insert" parameterType="list" useGeneratedKeys="true"  keyProperty="viewSeq, sectionSeq">
+	    <if test="list.size != 0">
+	    
+	        INSERT IGNORE INTO cs_view_section_relation (
+	            view_seq, section_seq, section_priority
+	        )
+	        VALUES
+	        <foreach collection="list" item="sectionDto" separator="," >
+	        (
+	              #{sectionDto.viewSeq}
+	            , #{sectionDto.sectionSeq}
+	            , 0
+	        )
+	        </foreach>
+	        
+	    </if>
+	</insert>
+
+
+	<update id="update" parameterType="sectionDto">   	
+     	UPDATE cs_view_section_relation
+     	SET
+              section_priority = #{priority}
+	   	<trim prefix="WHERE" prefixOverrides="AND |OR ">
+  				view_seq = #{viewSeq} 
+  			AND section_seq = #{sectionSeq}
+  		</trim>
+	</update>
+
+
+	<delete id="delete" parameterType="list">
+	<if test="list.size != 0">
+	    
+	    DELETE FROM cs_view_section_relation   
+  		
+  		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+  			<foreach collection="list" item="sectionDto" open="(" separator="OR" close=")">  			
+	  		(	
+	  				view_seq = #{sectionDto.viewSeq} 
+	  			AND section_seq = #{sectionDto.sectionSeq} 
+	  		)
+  			</foreach>
+	    </trim>
+	    
+	</if>
+	</delete>
+
+
+</mapper>

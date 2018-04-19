@@ -23,14 +23,10 @@
 <script type="text/javascript" src="/js/template/datatables/dataTables.bootstrap4.js?v=${cache}"></script>
     
 
-
 <!-- init script variable for external .js files -->
-<script>
-	var code = eval('('+'${code}'+')'); 
-</script>
+<script> var code = eval('('+'${code}'+')'); </script>
 
 <!-- Custom scripts for this template -->
-<script type="text/javascript" src="/js/admin/common_js_function.js?v=${cache}"></script>
 <script type="text/javascript" src="/js/admin/common_custom.js?v=${cache}"></script>
 
 

@@ -7,12 +7,12 @@ import org.spring.code.vo.dto.SectionDto;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class SectionDaoImpl extends CommonDaoImpl<SectionDto> implements SectionDao{
+public class ViewRelationDaoImpl extends CommonDaoImpl<SectionDto> implements ViewRelationDao{
 	
 	@Override
 	public List<SectionDto> selectList(Map<?,?> params)  { 
 		// TODO Auto-generated method stub
-		String queryId = SectionDao.NAMESPACE+"select";
+		String queryId = ViewRelationDao.NAMESPACE+"select";
 		
 		return super.selectList(queryId, params);
 	}
@@ -20,7 +20,7 @@ public class SectionDaoImpl extends CommonDaoImpl<SectionDto> implements Section
 	@Override
 	public Object insert(List<SectionDto> vo){
 		// TODO Auto-generated method stub
-		String queryId = SectionDao.NAMESPACE+"insert";
+		String queryId = ViewRelationDao.NAMESPACE+"insert";
 		
 		return super.insert(queryId,vo);
 	}
@@ -28,7 +28,7 @@ public class SectionDaoImpl extends CommonDaoImpl<SectionDto> implements Section
 	@Override
 	public Object update(SectionDto vo){
 		// TODO Auto-generated method stub
-		String queryId = SectionDao.NAMESPACE+"update";
+		String queryId = ViewRelationDao.NAMESPACE+"update";
 	
 		return super.update(queryId,vo);
 	}
@@ -36,7 +36,7 @@ public class SectionDaoImpl extends CommonDaoImpl<SectionDto> implements Section
 	@Override
 	public Object delete(List<SectionDto> vo){
 		// TODO Auto-generated method stub
-		String queryId = SectionDao.NAMESPACE+"delete";
+		String queryId = ViewRelationDao.NAMESPACE+"delete";
 		
 		return super.delete(queryId,vo);
 	}

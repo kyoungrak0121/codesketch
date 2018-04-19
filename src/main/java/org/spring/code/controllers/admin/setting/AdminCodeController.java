@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,10 +48,11 @@ public class AdminCodeController extends AdminFrontController {
 		Map<String,Object> params = paserRequetToHashMap(req);	
  		
  		JqgridDto jqgridDto = new JqgridDto(); 
+ 		List<CodeDto> codeList = codeService.getCodeDtoList(params) ;
  				
- 		jqgridDto.setData(codeService.getCodeDtoList(params));
+ 		jqgridDto.setData(codeList);
  		
- 		pagingService.setPagingTotalPage();
+ 		pagingService.setPagingTotalPage(codeList.size());
  	
  		jqgridDto.setPagingDto(pagingService.getPagingDto());
  	
@@ -70,11 +72,34 @@ public class AdminCodeController extends AdminFrontController {
  		List<CodeDto> updateDto = JsonHelper.getJsonToObjectList(jsonData, "update", CodeDto.class);
  		List<CodeDto> deleteDto = JsonHelper.getJsonToObjectList(jsonData, "delete", CodeDto.class);
  		
- 		codeService.saveCodeDto( insertDto, updateDto, deleteDto );
+ 		saveCodeDto( insertDto, updateDto, deleteDto );
  		
  		codeDtoMap = codeService.getCodeDtoMap(new HashMap<>());
 
  		return ResponseHelper.send(codeDtoMap.get("E000200"), HttpStatus.OK);
+	}
+	
+	@Transactional (rollbackFor = Exception.class)
+	public void saveCodeDto(List<CodeDto> insertCodeDto, List<CodeDto> updateCodeDto, List<CodeDto> deleteCodeDto ){
+		// insert, update, delete batch로 한번에 처리 
+	
+		if(insertCodeDto != null && insertCodeDto.size() != 0) {
+			//collectionBundle.put("dtoList", insertCodeDto);
+			codeService.insertCodeDto(insertCodeDto);
+		}	
+		
+		if(updateCodeDto != null && updateCodeDto.size() != 0) {
+			//collectionBundle.put("dtoList", updateCodeDto);
+			
+			for(CodeDto vo : updateCodeDto){
+				codeService.updateCodeDto(vo);
+			}
+		}
+		
+		if(deleteCodeDto != null && deleteCodeDto.size() != 0) {
+			//collectionBundle.put("dtoList", deleteCodeDto);
+			codeService.deleteCodeDto(deleteCodeDto);
+		}
 	}
 	
 }

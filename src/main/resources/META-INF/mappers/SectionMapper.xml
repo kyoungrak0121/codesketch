@@ -5,30 +5,27 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="org.spring.code.vo.dao.SectionDao">
-	<cache /> 
+	<cache /> 	
 	
 	<resultMap id="sectionResultMap" type="sectionDto">
 		<id property="sectionSeq" column="section_seq" />
-		<result property="viewSeq" column="view_seq"/>
+		
 		<result property="filePath" column="file_path"/>
+		
+		<result property="viewSeq" column="view_seq"/>
+		<result property="priority" column="section_priority"/>
 	</resultMap>
 	
 	<select id="select" resultMap="sectionResultMap" parameterType="map">
 
 	SELECT
-			SQL_CALC_FOUND_ROWS s.*,
-			r.view_seq ,
-			r.section_priority as priority 
+			s.*
 	FROM 
-				  cs_section s
-		LEFT JOIN cs_view_section_relation r USING (section_seq)
- 		
+			cs_section s
+			
  		<trim prefix="WHERE" prefixOverrides="AND |OR ">
  			<if test="section_seq > 0"> 
  				AND s.section_seq like #{section_seq} 
- 			</if>
- 			<if test="view_seq > 0"> 
- 				AND r.view_seq like #{view_seq} 
  			</if>
  			<if test="title != null"> 
  				AND s.title like #{title} 
@@ -57,9 +54,8 @@
   		<if test="startIndex != null and endIndex != null"> 
   			LIMIT #{startIndex}, #{endIndex} 
   		</if>
-  		
 	</select>
-	
+
 	<insert id="insert" parameterType="list" useGeneratedKeys="true"  keyProperty="sectionSeq">
 	    <if test="list.size != 0">
 	        INSERT INTO cs_section (

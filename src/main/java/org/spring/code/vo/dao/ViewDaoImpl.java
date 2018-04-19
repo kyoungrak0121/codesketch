@@ -7,14 +7,14 @@ import org.spring.code.vo.dto.ViewDto;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ViewDaoImpl extends GenericDaoImpl<ViewDto> implements ViewDao{
+public class ViewDaoImpl extends CommonDaoImpl<ViewDto> implements ViewDao{
 	
 	@Override
-	public List<ViewDto> select(Map<?,?> params)  { 
+	public List<ViewDto> selectList(Map<?,?> params)  { 
 		// TODO Auto-generated method stub
 		String queryId = ViewDao.NAMESPACE+"select";
 		
-		return super.select(queryId, params);
+		return super.selectList(queryId, params);
 	}
 	
 	@Override
@@ -41,4 +41,6 @@ public class ViewDaoImpl extends GenericDaoImpl<ViewDto> implements ViewDao{
 		return super.delete(queryId,vo);
 	}
 	
+
+
 }

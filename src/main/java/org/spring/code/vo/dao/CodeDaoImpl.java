@@ -7,14 +7,14 @@ import org.spring.code.vo.dto.CodeDto;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CodeDaoImpl extends GenericDaoImpl<CodeDto> implements CodeDao {
+public class CodeDaoImpl extends CommonDaoImpl<CodeDto> implements CodeDao {
 	
 	@Override
-	public List<CodeDto> select(Map<?,?> params){ 
+	public List<CodeDto> selectList(Map<?,?> params){ 
 		// TODO Auto-generated method stub
 		String queryId = CodeDao.NAMESPACE+"select";
 		
-		return super.select(queryId, params);
+		return super.selectList(queryId, params);
 	}
 	
 	@Override

@@ -1,7 +1,5 @@
 package org.spring.code.services;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,52 +18,31 @@ public class ViewService{
 	private ViewDao viewDao;	
 	
 	public List<ViewDto> getViewDto(Map<?,?> params){
-		return viewDao.select(params);
+		return viewDao.selectList(params);
 	}
+	
+
 	
 	@Transactional (rollbackFor = Exception.class)
-	public Map<String,Object> saveViewDto(List<ViewDto> insertDto, List<ViewDto> updateDto, List<ViewDto> deleteDto ){
-		// insert, update, delete batch로 한번에 처리 
-	
-		Map<String,Object> resultBundle = new HashMap<>();
-		
-		if(insertDto != null && insertDto.size() != 0) {
-			//collectionBundle.put("dtoList", insertViewDto);
-			resultBundle.put("insert",insertViewDto(insertDto));
-		}	
-		
-		// error 발생
-		//updateViewDto.add((T) new ViewDto());
-		
-		if(updateDto != null && updateDto.size() != 0) {
-			//collectionBundle.put("dtoList", updateViewDto);
-			
-			List<Object> resultList = new ArrayList<>();
-			
-			for(ViewDto vo : updateDto){
-				resultList.add(updateViewDto(vo));
-			}
-			resultBundle.put("update",resultList);
-		}
-		
-		if(deleteDto != null && deleteDto.size() != 0) {
-			//collectionBundle.put("dtoList", deleteViewDto);
-			resultBundle.put("delete",deleteViewDto(deleteDto));
-		}
-		
-		return resultBundle;
-	}
-	
-	private Object insertViewDto(List<ViewDto> vo){
+	public Object insertViewDto(List<ViewDto> vo){
 		return viewDao.insert(vo);
 	}
 	
-	private Object updateViewDto(ViewDto vo){
+	@Transactional (rollbackFor = Exception.class)
+	public Object updateViewDto(ViewDto vo){
 		
 		return viewDao.update(vo);
 	}
 	
-	private Object deleteViewDto(List<ViewDto> vo){
+	@Transactional (rollbackFor = Exception.class)
+	public Object deleteViewDto(List<ViewDto> vo){
 		return viewDao.delete(vo);
 	}
+	
+	
+	
+	
+	
+	
+
 }
